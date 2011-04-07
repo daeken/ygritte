@@ -1,6 +1,7 @@
 from pygame import *
 
 import types
+from bullet import Bullet
 from level import Level
 from player import Player
 from renderer import Renderer
@@ -13,10 +14,13 @@ class Game(object):
 		inputHandlers = dict((k, types.MethodType(v, self, Game)) for k, v in inputHandlers.items())
 
 		self.renderer = Renderer(self)
+		self.size = self.renderer.size
+		self.hsize = self.renderer.hsize
 		self.level = Level.spawn(self, 0)
 		self.player = Player(self)
-		self.level.move(self.player.pos)
+		self.worldOff = self.player.pos
 		self.enemies = []
+		self.bullets = []
 		self.keys = {}
 	
 	def run(self):
@@ -24,6 +28,13 @@ class Game(object):
 	
 	def tick(self):
 		self.player.update()
+		map(Bullet.update, self.bullets)
+	
+	def move(self, off):
+		self.worldOff = (self.worldOff[0]+off[0], self.worldOff[1]+off[1])
+	
+	def addBullet(self, type, pos, rot, accel, friendly):
+		self.bullets.append(Bullet(self, type, pos, rot, accel, friendly))
 	
 	def handleInput(self, event):
 		if event.type in inputHandlers:

@@ -5,9 +5,8 @@ class Level(object):
 
 	def __init__(self, game):
 		self.game = game
-		self.bg = Asset('bg_level%i' % self.levelNumber)
+		self.bg = Asset.load('bg_level%i' % self.levelNumber)
 		self.i = 0
-		self.pos = 0, 0
 
 	@staticmethod
 	def spawn(game, number, *args, **kwargs):
@@ -17,11 +16,8 @@ class Level(object):
 	def register(level):
 		Level.levels[level.levelNumber] = level
 	
-	def move(self, off):
-		self.pos = (self.pos[0]+off[0], self.pos[1]+off[1])
-
 	def draw(self, surface):
-		self.bg.draw(surface, self.pos, center=True)
+		self.bg.draw(surface, self.game.worldOff, center=True)
 		self.i += 1
 
 @Level.register

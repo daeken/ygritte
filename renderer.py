@@ -6,8 +6,9 @@ class Renderer(object):
 		self.setup()
 	
 	def setup(self):
-		self.screen = pygame.display.set_mode((800, 600))
+		self.screen = pygame.display.set_mode((800, 600), pygame.HWSURFACE|pygame.DOUBLEBUF)
 		self.size = self.screen.get_size()
+		self.hsize = self.size[0]/2, self.size[1]/2
 		pygame.display.set_caption('Ygritte')
 	
 	def run(self):
@@ -38,5 +39,7 @@ class Renderer(object):
 		self.screen.fill((0, 0, 0))
 		self.game.level.draw(self.screen)
 		self.game.player.draw(self.screen)
+		for bullet in self.game.bullets:
+			bullet.draw(self.screen)
 
 		pygame.display.flip()
