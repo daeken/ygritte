@@ -1,11 +1,15 @@
 from asset import Asset
 
+grid = Asset.load('layer0')
+stars = Asset.load('layer1')
+
 class Level(object):
 	levels = {}
 
 	def __init__(self, game):
 		self.game = game
-		self.bg = Asset.load('bg_level%i' % self.levelNumber)
+		self.bg = Asset.load('layer2_outline', mask='layer2_mask')# % self.levelNumber)
+		stars.maskOff(self.bg)
 		self.i = 0
 
 	@staticmethod
@@ -17,6 +21,8 @@ class Level(object):
 		Level.levels[level.levelNumber] = level
 	
 	def draw(self, surface):
+		grid.draw(surface, (0, 0), center=False)
+		stars.draw(surface, self.game.worldOff, center=True)
 		self.bg.draw(surface, self.game.worldOff, center=True)
 		self.i += 1
 

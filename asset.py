@@ -4,18 +4,40 @@ class Asset(object):
 	cache = {}
 
 	@staticmethod
-	def load(name):
+	def load(name, mask=None):
 		if name in Asset.cache:
 			return Asset.cache[name]
-		Asset.cache[name] = ret = Asset(name)
+		Asset.cache[name] = ret = Asset(name, mask=mask)
 		return ret
 
-	def __init__(self, name):
-		self.image = pygame.image.load('assets/%s.png' % name)
+	def __init__(self, name, mask=None):
+		self.orig = self.image = pygame.image.load('assets/%s.png' % name)
+		self.mask = None
+		if mask:
+			self.mask = pygame.image.load('assets/%s.png' % mask)
 		self.size = self.image.get_size()
 		self.hsize = self.size[0]/2, self.size[1]/2
 		self.cacheRot = {0: (self.image, self.hsize)}
 		self.doubleImage = pygame.transform.scale2x(self.image)
+	
+	def maskOff(self, asset):
+		assert asset.mask != None
+		mask = asset.mask
+		self.image = self.orig.copy()
+		isize = self.size
+		msize = mask.get_size()
+		size = (min(isize[0], msize[0]), min(isize[1], msize[1]))
+		self.image.lock()
+		mask.lock()
+		print 'Masking'
+		for x in xrange(isize[0]):
+			for y in xrange(isize[1]):
+				if x >= size[0] or y >= size[1] or mask.get_at((x, y))[3] == 0:
+					self.image.set_at((x, y), (0, 0, 0, 0))
+		print 'Done'
+		self.image.unlock()
+		mask.unlock()
+		self.cacheRot = {0: (self.image, self.hsize)}
 	
 	def ensureCached(self, rotation):
 		rotation %= 360
@@ -46,10 +68,10 @@ class Asset(object):
 		else:
 			return pygame.Rect(pos[0], pos[1], pos[0]+hsize[0]*2, pos[1]+hsize[1]*2)
 
-explosions = (
-		Asset('explosion0'), 
-		Asset('explosion1'), 
-		Asset('explosion2'), 
-		Asset('explosion3'), 
-		Asset('explosion4'), 
-	)
+#explosions = (
+#		Asset('explosion0'), 
+#		Asset('explosion1'), 
+#		Asset('explosion2'), 
+#		Asset('explosion3'), 
+#		Asset('explosion4'), 
+#	)

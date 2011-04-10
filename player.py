@@ -31,5 +31,5 @@ class Player(Ship):
 		if self.shooting:
 			if self.shootCounter == 0:
 				x, y = rotatePoint(self.rot, point=(0, self.state.hsize[1]))
-				self.game.addBullet(1, (self.pos[0]+x, self.pos[1]-y), self.rot, self.accel, True)
+				self.game.addBullet(0, (self.pos[0]+x, self.pos[1]-y), self.rot, self.accel, True)
 			self.shootCounter = (self.shootCounter + 1) % shootSpeed
